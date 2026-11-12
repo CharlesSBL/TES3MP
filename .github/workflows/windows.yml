@@ -259,3 +259,20 @@ jobs:
         files: ${{ github.workspace }}/install/*.exe
         prerelease: true
         draft: true
+    - name: Store TES3MP server
+      uses: actions/upload-artifact@v6
+      with:
+        name: tes3mp-server-${{ github.sha }}
+        path: ${{ github.workspace }}/build/tes3mp_server.exe
+        if-no-files-found: error
+
+    - name: Store log etc. artifacts
+      continue-on-error: true
+      uses: actions/upload-artifact@v6
+      with:
+        name: openmw-windows-${{ inputs.msvc }}-logs-and-stuff-${{ github.sha }}
+        path: |
+            ${{ github.workspace }}/build/compile_commands.json
+            ${{ github.workspace }}/build/**/*.log
+            ${{ github.workspace }}/build/**/*.ninja_log
+            ${{ github.workspace }}/build/**/CMakeCache.txt
