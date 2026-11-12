@@ -99,7 +99,7 @@ jobs:
       run: choco install nasm --yes --no-progress
 
     - name: Provision transport dependencies
-      run: python scripts/run_vnext_baseline.py provision
+      run: python scripts/provision_vnext_transport.py
 
     - name: Configure OpenMW
       run: >
