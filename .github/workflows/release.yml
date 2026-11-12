@@ -2,8 +2,9 @@ name: Release
 
 on:
   push:
-      tags:
-        - openmw-**
+    tags:
+      - openmw-**
+  workflow_dispatch:
 
 jobs:
   Windows:
@@ -14,14 +15,3 @@ jobs:
       package: true
       release: true
     secrets: inherit
-  MacOS:
-    strategy:
-      fail-fast: true
-      matrix:
-        args:
-          - image: macos-15
-          - image: macos-15-intel
-    uses: ./.github/workflows/macos.yml
-    with:
-      image: ${{ matrix.args.image }}
-      build-type: Release
