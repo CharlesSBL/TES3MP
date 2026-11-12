@@ -88,15 +88,18 @@ jobs:
       working-directory: ${{ github.workspace }}/deps/Qt
       run: .\aqt_x64.exe install-qt windows desktop ${{ env.QT_VER }} win64_msvc2019_64
 
-    - name: Install native Perl for OpenSSL
-      run: choco install strawberryperl --yes --no-progress
-
-    - name: Provision transport dependencies
-      run: python scripts/run_vnext_baseline.py provision
-
     - uses: ilammy/msvc-dev-cmd@v1
 
     - uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Install native Perl for OpenSSL
+      run: choco install strawberryperl --yes --no-progress
+
+    - name: Install NASM
+      run: choco install nasm --yes --no-progress
+
+    - name: Provision transport dependencies
+      run: python scripts/run_vnext_baseline.py provision
 
     - name: Configure OpenMW
       run: >
@@ -118,6 +121,8 @@ jobs:
         -D OPENMW_USE_SYSTEM_SQLITE3=OFF
         -D OPENMW_USE_SYSTEM_YAML_CPP=OFF
         -D OPENMW_LTO_BUILD=ON
+        -D TES3MP_ENABLE_GNS_TRANSPORT=ON
+        -D TES3MP_TRANSPORT_DEPENDENCY_MANIFEST='${{ github.workspace }}/build/vnext-transport-dependencies/manifest.json'
         ${{ inputs.package && '-D "VCREDIST64=$env:VCToolsRedistDir/vc_redist.x64.exe"' || '' }}
         -D CMAKE_EXPORT_COMPILE_COMMANDS=ON
 
@@ -207,6 +212,13 @@ jobs:
         name: openmw-windows-${{ inputs.msvc }}-sym-store-${{ github.sha }}
         path: ${{ github.workspace }}/SymStore/*
 
+    - name: Store TES3MP server
+      uses: actions/upload-artifact@v6
+      with:
+        name: tes3mp-server-${{ github.sha }}
+        path: ${{ github.workspace }}/build/tes3mp_server.exe
+        if-no-files-found: error
+
     - name: Store log etc. artifacts
       continue-on-error: true
       uses: actions/upload-artifact@v6
@@ -214,9 +226,9 @@ jobs:
         name: openmw-windows-${{ inputs.msvc }}-logs-and-stuff-${{ github.sha }}
         path: |
           ${{ github.workspace }}/build/compile_commands.json
-          ${{ github.workspace }}/build/**/*.log
-          ${{ github.workspace }}/build/**/*.ninja_log
-          ${{ github.workspace }}/build/**/CMakeCache.txt
+          ${{ github.workspace }}/build/*.log
+          ${{ github.workspace }}/build/*.ninja_log
+          ${{ github.workspace }}/build/CMakeCache.txt
 
     - name: Upload to symbol server
       env:
@@ -266,9 +278,3 @@ jobs:
         files: ${{ github.workspace }}/install/*.exe
         prerelease: true
         draft: true
-    - name: Store TES3MP server
-      uses: actions/upload-artifact@v6
-      with:
-        name: tes3mp-server-${{ github.sha }}
-        path: ${{ github.workspace }}/build/tes3mp_server.exe
-        if-no-files-found: error
