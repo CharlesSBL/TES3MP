@@ -88,6 +88,12 @@ jobs:
       working-directory: ${{ github.workspace }}/deps/Qt
       run: .\aqt_x64.exe install-qt windows desktop ${{ env.QT_VER }} win64_msvc2019_64
 
+    - name: Install native Perl for OpenSSL
+      run: choco install strawberryperl --yes --no-progress
+
+    - name: Provision transport dependencies
+      run: python scripts/run_vnext_baseline.py provision
+
     - uses: ilammy/msvc-dev-cmd@v1
 
     - uses: seanmiddleditch/gha-setup-ninja@master
