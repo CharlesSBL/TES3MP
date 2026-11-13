@@ -1,4 +1,6 @@
 #include "animation.hpp"
+#include <components/settings/settings.hpp>
+#include <cmath>
 #include "../mwmechanics/deathanimation.hpp"
 
 #include <algorithm>
@@ -2176,9 +2178,17 @@ namespace MWRender
 
     float Animation::AnimationTime::getValue(osg::NodeVisitor*)
     {
-        if (mTimePtr)
-            return *mTimePtr;
-        return 0.f;
+        const float time = mTimePtr ? *mTimePtr : 0.f;
+        // Stepped animation: quantise the time pose controllers sample, so skeletons
+        // snap between poses while movement and physics keep the real frame rate.
+        // 0 disables the effect.
+        const int stepFps = Settings::Manager::getInt("step fps", "Animation");
+        if (stepFps > 0)
+        {
+            const float fps = static_cast<float>(stepFps);
+            return std::floor(time * fps) / fps;
+        }
+        return time;
     }
 
     float EffectAnimationTime::getValue(osg::NodeVisitor*)
