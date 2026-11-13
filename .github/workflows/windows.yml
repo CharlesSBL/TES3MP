@@ -201,18 +201,7 @@ jobs:
         name: openmw-windows-${{ inputs.msvc }}-sym-store-${{ github.sha }}
         path: ${{ github.workspace }}/SymStore/*
 
-      - name: Store log etc. artifacts
-      - name: Store log etc. artifacts
-        continue-on-error: true
-        uses: actions/upload-artifact@v6
-        with:
-          name: openmw-windows-${{ inputs.msvc }}-logs-and-stuff-${{ github.sha }}
-          path: |
-            ${{ github.workspace }}/build/compile_commands.json
-            ${{ github.workspace }}/build/*.log
-            ${{ github.workspace }}/build/*.ninja_log
-            ${{ github.workspace }}/build/CMakeCache.txt
-        continue-on-error: true
+    - name: Store log etc. artifacts
       uses: actions/upload-artifact@v6
       with:
         name: openmw-windows-${{ inputs.msvc }}-logs-and-stuff-${{ github.sha }}
