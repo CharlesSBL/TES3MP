@@ -1,0 +1,13 @@
+name: Windows build
+on:
+  push:
+    branches: [ animstep ]
+jobs:
+  Windows:
+    uses: ./.github/workflows/windows.yml
+    with:
+      image: "2022"
+      build-type: Release
+      package: true
+      release: false
+    secrets: inherit
