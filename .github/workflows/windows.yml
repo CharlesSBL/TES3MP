@@ -202,6 +202,7 @@ jobs:
         path: ${{ github.workspace }}/SymStore/*
 
     - name: Store log etc. artifacts
+        continue-on-error: true
       uses: actions/upload-artifact@v6
       with:
         name: openmw-windows-${{ inputs.msvc }}-logs-and-stuff-${{ github.sha }}
